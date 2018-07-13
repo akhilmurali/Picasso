@@ -95,6 +95,17 @@ router.put('/:id/likes', (req, res) =>{
     Post.update({_id: id}, {$inc: {likes}});
 });
 
+router.delete('/:id/post', (req, res)=>{
+  let postId = req.params.id;
+  let userId = req.body.uid;  //user id on the post
+  if(req.session.uid == userId){
+      Post.deleteOne({_id: id});
+      res.json({status: 'ok', message: 'Deleted post successfully'});
+  }else{
+    res.status(401).json({status: 'error', message: "can't delete the message"});
+  }
+});
+
 //Route to logout:
 router.get('/logout', function (req, res, next) {
   if (req.session) {
