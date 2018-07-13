@@ -1,6 +1,6 @@
-let mongoose = require('mongoose');
+let mongoose = require('mongoose');;
 let bcrypt = require('bcrypt');
-var userSchema = new mongoose.Schema({
+let userSchema = new mongoose.Schema({
     username: {
         type: String,
         required: true,
@@ -41,6 +41,27 @@ userSchema.pre('save',function(next){
     });
 });
 
-let User = mongoose.model('User', userSchema)
+userSchema.statics.authenticate = function (email, password, callback) {
+    User.findOne({email: email}).exec(function(err, user){
+        console.log(user);
+        if(err){
+            return callback(err);
+        }else if(!user){
+            let err = new Error('User Not Found');
+            err.status = 401;
+            return callback(err);
+        }
 
+        //If user found:
+        bcrypt.compare(password, user.password, function(err, result){
+            if(result == true){
+                return callback(null, user);
+            }else{
+                return callback();
+            }
+        });
+    });
+}
+
+let User = mongoose.model('User', userSchema);
 module.exports = User;
