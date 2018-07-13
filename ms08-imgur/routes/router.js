@@ -2,6 +2,8 @@ let express = require('express');
 let router = express.Router();
 let User = require('../models/userModel');
 let Post = require('../models/postModel');
+
+//Base route:
 router.get('/', (req, res)=>{
   Post.find({}, function(err, data){
     if(err) res.json({status: 'error', message: 'error recieving data from the database'});
@@ -9,7 +11,7 @@ router.get('/', (req, res)=>{
   });
 });
 
-
+//Signup route:
 router.post('/signup', (req, res) => {
   
   let userData = {
@@ -29,6 +31,7 @@ router.post('/signup', (req, res) => {
   });
 });
 
+//Sign in route:
 router.post('/signin', (req, res, next) => {
   let email = req.body.email;
   let pass = req.body.password;
@@ -47,7 +50,7 @@ router.post('/signin', (req, res, next) => {
 
 });
 
-
+//Route to redirect user to his/her homepage:
 router.get('/home', (req, res, next) => {
   User.findById(req.session.uid)
     .exec(function (err, user) {
@@ -68,7 +71,7 @@ router.get('/home', (req, res, next) => {
     });
 });
 
-
+//Route to add a post to the website:
 router.post('/addpost', (req, res, next)=>{
     if(req.session.uid){
       let postData = {
@@ -80,12 +83,19 @@ router.post('/addpost', (req, res, next)=>{
       Post.create(postData, function(err, post){
         if(err) res.json({status: 'error'});
         res.json({status: 'ok', message: 'post saved successfully'});
-      })
+      });
     }else{
       res.status(301).redirect('/');
     }
 });
 
+//Increment likes on a router:
+router.put('/:id/likes', (req, res) =>{ 
+    let id = req.param.id;
+    Post.update({_id: id}, {$inc: {likes}});
+});
+
+//Route to logout:
 router.get('/logout', function (req, res, next) {
   if (req.session) {
     // delete session object:
@@ -98,6 +108,5 @@ router.get('/logout', function (req, res, next) {
     });
   }
 });
-
 
 module.exports = router;
