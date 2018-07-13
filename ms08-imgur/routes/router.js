@@ -2,6 +2,11 @@ let express = require('express');
 let router = express.Router();
 let User = require('../models/userModel');
 
+router.get('/', (req, res)=>{
+  res.json({status: 'ok'});
+});
+
+
 router.post('/signup', (req, res) => {
   
   let userData = {
