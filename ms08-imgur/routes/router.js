@@ -1,9 +1,12 @@
 let express = require('express');
 let router = express.Router();
 let User = require('../models/userModel');
-
+let Post = require('../models/postModel');
 router.get('/', (req, res)=>{
-  res.json({status: 'ok'});
+  Post.find({}, function(err, data){
+    if(err) res.json({status: 'error', message: 'error recieving data from the database'});
+    res.json({status: 'ok', data});
+  });
 });
 
 
@@ -63,6 +66,24 @@ router.get('/home', (req, res, next) => {
         });
       }
     });
+});
+
+
+router.post('/addpost', (req, res, next)=>{
+    if(req.session.uid){
+      let postData = {
+        uid: req.session.uid,
+        url: req.body.url,
+        likes: req.body.likes,
+        tags: req.body.tags
+      }
+      Post.create(postData, function(err, post){
+        if(err) res.json({status: 'error'});
+        res.json({status: 'ok', message: 'post saved successfully'});
+      })
+    }else{
+      res.status(301).redirect('/');
+    }
 });
 
 router.get('/logout', function (req, res, next) {
