@@ -37,7 +37,7 @@ router.post('/signin', (req, res, next) => {
   let pass = req.body.password;
   console.log(email, pass);
   User.authenticate(email, pass, function (err, user) {
-    console.log('hi');
+    console.log('hi') ;
     if (err || !user) {
       var err = new Error('Wrong email or password.');
       err.status = 401;
