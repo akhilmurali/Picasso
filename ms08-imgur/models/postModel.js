@@ -1,6 +1,6 @@
 let mongooose = require('mongoose');
 let postSchema = new mongooose.Schema({
-    url: {
+    b64: {
         type: String,
         required: true,
         trim:true
@@ -21,6 +21,11 @@ let postSchema = new mongooose.Schema({
     uid:{
         type: String,
         required: true
+    },
+    mimetype:{
+        type:String,
+        required: true,
+        trim: true
     }
 });
 
