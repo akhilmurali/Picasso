@@ -11,7 +11,7 @@ let userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    email:{
+    email: {
         type: String,
         unique: true,
         required: true,
@@ -30,35 +30,29 @@ let userSchema = new mongoose.Schema({
 });
 
 //Hash the password prior to saving it:
-userSchema.pre('save',function(next){
+userSchema.pre('save', function (next) {
     let user = this;
-    bcrypt.hash(user.password, 10, function (err, hash){
-      if (err) {
-        return next(err);
-      }
-      user.password = hash;
-      next();
+    bcrypt.hash(user.password, 10, function (err, hash) {
+        if (err) {
+            return next(err);
+        }
+        user.password = hash;
+        next();
     });
 });
 
-userSchema.statics.authenticate = function (email, password, callback) {
-    User.findOne({email: email}).exec(function(err, user){
-        console.log(user);
-        if(err){
-            return callback(err);
-        }else if(!user){
-            let err = new Error('User Not Found');
-            err.status = 401;
-            return callback(err);
-        }
-
-        //If user found:
-        bcrypt.compare(password, user.password, function(err, result){
-            if(result == true){
-                return callback(null, user);
-            }else{
-                return callback();
-            }
+userSchema.statics.authenticate = (email, password) => {
+    return new Promise(function (resolve, reject) {
+        User.findOne({ email: email }).exec(function (err, user) {
+            if (err) reject(err);
+            //If user found:
+            bcrypt.compare(password, user.password, function (err, result) {
+                if (result == true) {
+                    resolve(user);
+                } else {
+                    reject({error: 'invalid credentials'});
+                }
+            });
         });
     });
 }

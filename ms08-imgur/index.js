@@ -5,7 +5,6 @@ let session = require('express-session');
 require('dotenv').config();
 let mongoose = require('mongoose');
 
-console.log('console after mongo connects');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(session({
