@@ -9,7 +9,6 @@ let fs = require('fs');
 
 //Base route:
 router.get('/', (req, res) => {
-  res.send(req.sess.data);
   Post.find({}, function (err, data) {
     if (err) res.json({ status: 'error', message: 'error recieving data from the database' });
     res.json({ status: 'ok', data });
